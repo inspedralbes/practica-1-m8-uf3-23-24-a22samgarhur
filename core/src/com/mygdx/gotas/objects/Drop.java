@@ -19,6 +19,7 @@ public class Drop extends Actor {
     final Gotas game;
 
     private Vector2 position;
+    private int velocity;
     private int width, height;
 
     private float runTime;
@@ -26,9 +27,10 @@ public class Drop extends Actor {
 
     protected boolean leftOfScreen;
 
-    public Drop(Gotas juego,float x, float y, int width, int height) {
+    public Drop(Gotas juego,float x, float y, int width, int height,int velocity) {
 
         this.game = juego;
+        this.velocity = velocity;
         // Inicialitzem els arguments segons la crida del constructor
         this.width = width;
         this.height = height;
@@ -41,11 +43,18 @@ public class Drop extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        runTime += delta;
+        position.x += velocity*delta;
+
+        if(position.x + width<0){
+            leftOfScreen = true;
+
+        }
 
         // Actualitzem el cercle de col·lisions (punt central de l'asteroide i del radi).
         collisionCircle.set(position.x + width / 2.0f, position.y + width / 2.0f, width / 2.0f);
     }
+
+
 
 
     public void reset(float newX) {

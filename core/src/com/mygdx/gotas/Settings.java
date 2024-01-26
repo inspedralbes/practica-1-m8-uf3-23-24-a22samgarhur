@@ -2,8 +2,8 @@ package com.mygdx.gotas;
 
 public class Settings {
     // Mida del joc, s'escalarà segons la necessitat
-    public static final int JUEGO_ALTO = 240;
-    public static final int JUEGO_ANCHO= 135;
+    public static final int JUEGO_ALTO = 480;
+    public static final int JUEGO_ANCHO= 800;
 
     // Propietats de la nau
     public static final float BUCKET_VELOCIDAD = 50;

@@ -59,6 +59,7 @@ public class Bucket extends Actor {
         }
 
         collisionRect.set(position.x, position.y + 3, width, 10);
+        setBounds(position.x, position.y ,width,height);
 
 
     }

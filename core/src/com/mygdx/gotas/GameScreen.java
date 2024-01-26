@@ -11,6 +11,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -28,6 +30,11 @@ public class GameScreen implements Screen {
     private Stage stage;
     // Per obtenir el batch de l'stage
     private Batch batch;
+
+    public BitmapFont font2;
+
+    // Representació de figures geomètriques
+    private ShapeRenderer shapeRenderer;
     Texture dropImage;
     Texture piedrasImage;
     Texture fondoActual;
@@ -57,6 +64,10 @@ public class GameScreen implements Screen {
         dropImage = game.assetManager.get("droplet.png", Texture.class);
         piedrasImage = game.assetManager.get("piedra.png", Texture.class);
 
+        font2 = new BitmapFont(false);
+        font2.setColor(242 / 255f, 171 / 255f, 0, 1);
+        font2.getData().setScale(1.8f);  // Ajusta el tamaño de la fuente según tus necesidades
+
 
         // Cargamos los sonidos iniciales de la clase AssetsManager que viene con GDX
 
@@ -81,7 +92,8 @@ public class GameScreen implements Screen {
         batch = stage.getBatch();
 
         // create a Rectangle to logically represent the bucket
-        bucket = new Bucket(game,800 / 2 - 64 / 2,20,64,64);
+        bucket = new Bucket(game,800 / 2 - 64 / 2,480/2,64,64);
+
         stage.addActor(bucket);
 
 
@@ -97,7 +109,9 @@ public class GameScreen implements Screen {
     }
 
     private void spawnRaindrop() {
-        Drop raindrop = new Drop(game,MathUtils.random(0, 800 - 64),480,64,64);
+        Drop raindrop = new Drop(game,0,0,64,64,40);
+        raindrop.setX(MathUtils.random(0, 800 - 64));
+        raindrop.setY(Settings.JUEGO_ALTO);
         raindrops.add(raindrop);
         stage.addActor(raindrop);
         lastDropTime = TimeUtils.nanoTime();
@@ -118,32 +132,27 @@ public class GameScreen implements Screen {
         stage.draw();
         stage.act(delta);
 
+        ScreenUtils.clear(0, 0, 0.2f, 1);
 
-        // tell the camera to update its matrices.
-        camera.update();
-
-        // tell the SpriteBatch to render in the
-        // coordinate system specified by the camera.
-        game.batch.setProjectionMatrix(camera.combined);
 
         // begin a new batch and draw the bucket and
         // all drops
-        game.batch.begin();
+        batch.begin();
 
         // Dibuja el fondo
-        game.batch.draw(fondoActual, 0, 0, 800, 480);
-        game.font2.draw(game.batch, "Gotas recolectadas: " + gotasCogidas, 0, 480);
-        game.font2.draw(game.batch, "Gotas falladas: " + gotasPerdidas, 0, 450);
-        game.font2.draw(game.batch, "Vidas: " + Vidas, 0, 420);
+        batch.draw(fondoActual, 0, 0, 800, 480);
+        font2.draw(batch, "Gotas recolectadas: " + gotasCogidas, 0, 480);
+        font2.draw(batch, "Gotas falladas: " + gotasPerdidas, 0, 450);
+        font2.draw(batch, "Vidas: " + Vidas, 0, 420);
 
         for (Drop raindrop : raindrops) {
-            game.batch.draw(dropImage, raindrop.getX(), raindrop.getY(),64,64);
+            batch.draw(dropImage, raindrop.getX(), raindrop.getY(),64,64);
         }
 
         for (Rectangle caidaprieda : caidapiedras) {
-            game.batch.draw(piedrasImage, caidaprieda.x, caidaprieda.y,64,64);
+            batch.draw(piedrasImage, caidaprieda.x, caidaprieda.y,64,64);
         }
-        game.batch.end();
+        batch.end();
 
         // process user input
         if (Gdx.input.isTouched()) {
